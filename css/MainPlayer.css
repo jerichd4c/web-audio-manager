@@ -1,0 +1,11 @@
+.host {
+    display: block; 
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+}
+
+.controls {
+    cursor: pointer;
+    margin: 5px;
+}
