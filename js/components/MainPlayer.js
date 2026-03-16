@@ -1,5 +1,3 @@
-import { styles } from ''
-
 export class MainPlayer extends HTMLElement {
     constructor() {
         super();
@@ -15,7 +13,6 @@ export class MainPlayer extends HTMLElement {
     render() {
         this.shadowRoot.innerHTML = `
         <styles>
-            ${styles}
         </styles>
         <div class="player-container">
 

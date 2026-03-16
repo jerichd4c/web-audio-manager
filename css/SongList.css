@@ -1,0 +1,22 @@
+.host {
+    display: block; 
+    border-left: 1px solid #ccc; 
+    padding: 15px; 
+    height: 100%;
+    }
+
+.header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px;
+    }
+.add-btn {
+    cursor: pointer; 
+    background: #1DB954; 
+    color: white; 
+    border: none; 
+    padding: 8px 15px; 
+    border-radius: 5px;
+    font-weight: bold;
+    }
