@@ -9,3 +9,23 @@
     cursor: pointer;
     margin: 5px;
 }
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    /* justify-content: center; */
+}
+
+#volumen-bar {
+    width: 100px;
+    cursor: pointer;
+}
+
+#mute-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}

@@ -32,6 +32,11 @@ export class MainPlayer extends HTMLElement {
                 <button id="play-pause">Play/Pause</button>
                 <button id="next-btn">Next</button>
             </div>
+
+            <div class="volume-container">
+                <button id="mute-btn">🔊</button>
+                <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.01">
+            </div>
         </div>
         `;
     }
@@ -43,8 +48,9 @@ export class MainPlayer extends HTMLElement {
         this.progressBar = this.shadowRoot.getElementById('progress-bar');
         this.currentTimeEl = this.shadowRoot.getElementById('current-time');
         this.durationEl = this.shadowRoot.getElementById('total-duration');
-
         this.playPauseButton.addEventListener('click', () => this.togglePlay());
+        this.volumeBar = this.shadowRoot.getElementById('volume-bar');
+        this.muteBtn = this.shadowRoot.getElementById('mute-btn');
 
         this.prevBtn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('request-prev', { bubbles: true, composed: true })));
 
@@ -59,6 +65,10 @@ export class MainPlayer extends HTMLElement {
         this.currentAudio.addEventListener('timeupdate', () => this.updateProgress());
 
         this.progressBar.addEventListener('input', (event) => this.seekAudio(event.target.value));
+
+        this.volumeBar.addEventListener('input', (event) => this.setVolume(event.target.value));
+
+        this.muteBtn.addEventListener('click', () => this.toggleMute());
 
     }
 
@@ -98,6 +108,30 @@ export class MainPlayer extends HTMLElement {
 
     seekAudio(newTime) {
         this.currentAudio.currentTime = newTime;
+    }
+
+    setVolume(value) {
+        this.currentAudio.volume = value;
+        if (this.currentAudio.muted) {
+            this.currentAudio.muted = false;
+        }
+        this.updateMuteButton();
+    }
+
+    toggleMute() {
+        // Inverts the muted state of the audio element
+        this.currentAudio.muted = !this.currentAudio.muted;
+        this.updateMuteButton();
+    }
+
+    updateMuteButton() {
+        if (this.currentAudio.muted || this.currentAudio.volume === 0) {
+            this.muteBtn.textContent = '🔇';
+        } else if (this.currentAudio.volume < 0.5) {
+            this.muteBtn.textContent = '🔈';
+        } else {
+            this.muteBtn.textContent = '🔊';
+        }
     }
 
     // End of life cycle
