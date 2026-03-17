@@ -21,8 +21,16 @@ export class MainPlayer extends HTMLElement {
             <h3 id="artist">Artist</h3>
             <h4 id="genre">Genre</h4>
 
+            <div class="progress-container">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" step="1">
+                <span id="total-duration">0:00</span>
+            </div>
+
             <div class="controls">
+                <button id="prev-btn">Prev</button>
                 <button id="play-pause">Play/Pause</button>
+                <button id="next-btn">Next</button>
             </div>
         </div>
         `;
@@ -30,10 +38,28 @@ export class MainPlayer extends HTMLElement {
 
     init() {
         this.playPauseButton = this.shadowRoot.getElementById('play-pause');
+        this.prevBtn = this.shadowRoot.getElementById('prev-btn');
+        this.nextBtn = this.shadowRoot.getElementById('next-btn');
+        this.progressBar = this.shadowRoot.getElementById('progress-bar');
+        this.currentTimeEl = this.shadowRoot.getElementById('current-time');
+        this.durationEl = this.shadowRoot.getElementById('total-duration');
 
         this.playPauseButton.addEventListener('click', () => this.togglePlay());
 
+        this.prevBtn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('request-prev', { bubbles: true, composed: true })));
+
+        this.nextBtn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('request-next', { bubbles: true, composed: true })));
+
+        this.currentAudio.addEventListener('ended', () => this.dispatchEvent(new CustomEvent('request-next', { bubbles: true, composed: true })));
+
         document.addEventListener('play-song', (event) => this.loadAndPlay(event.detail.song));
+
+        this.currentAudio.addEventListener('loadedmetadata', () => this.setDuration());
+
+        this.currentAudio.addEventListener('timeupdate', () => this.updateProgress());
+
+        this.progressBar.addEventListener('input', (event) => this.seekAudio(event.target.value));
+
     }
 
     loadAndPlay(songData) {
@@ -51,6 +77,27 @@ export class MainPlayer extends HTMLElement {
         } else {
             this.currentAudio.pause();
         }
+    }
+
+    formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    setDuration() {
+        this.progressBar.max = this.currentAudio.duration;
+        this.durationEl.textContent = this.formatTime(this.currentAudio.duration);
+    }
+
+    updateProgress() {
+        this.progressBar.value = this.currentAudio.currentTime;
+        this.currentTimeEl.textContent = this.formatTime(this.currentAudio.currentTime);
+    }
+
+    seekAudio(newTime) {
+        this.currentAudio.currentTime = newTime;
     }
 
     // End of life cycle
