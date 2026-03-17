@@ -46,7 +46,7 @@ export class MusicDB {
 
             // Song data to be stored in the database
             const songData = {
-                name: file,
+                file: file,
                 title: file.name.replace(/\.[^/.]+$/, ""),
                 artist: "Unknown Artist",
                 genre: "Unknown Genre",

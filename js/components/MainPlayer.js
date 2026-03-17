@@ -12,8 +12,8 @@ export class MainPlayer extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
-        <styles>
-        </styles>
+        <link rel="stylesheet" href="./css/MainPlayer.css">
+        
         <div class="player-container">
 
             <img id="cover" src="./resources/default-cover.png" alt="Song Cover" width="150" height="150">
@@ -33,7 +33,7 @@ export class MainPlayer extends HTMLElement {
 
         this.playPauseButton.addEventListener('click', () => this.togglePlay());
 
-        document.addEventListener('songSelected', (event) => this.loadSong(event.detail.song));
+        document.addEventListener('play-song', (event) => this.loadAndPlay(event.detail.song));
     }
 
     loadAndPlay(songData) {
