@@ -1,41 +1,67 @@
 :host {
-    display: block; 
-    border-left: 1px solid #ccc; 
-    padding: 15px; 
+    display: block;
+    border-left: 1px solid #ccc;
+    padding: 15px;
     height: 100%;
-    }
+    position: relative;
+}
 
 .header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px;
-    }
-.add-btn {
-    cursor: pointer; 
-    background: #1DB954; 
-    color: white; 
-    border: none; 
-    padding: 8px 15px; 
-    border-radius: 5px;
-    font-weight: bold;
-    }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
-.progress-container {
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    margin-top: 15px;
-    justify-content: center;
-    }
+.actions button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+}
 
-#progress-bar {
+.search-bar input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #aaa;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.scrollable-list {
+    max-height: 400px; 
+    overflow-y: auto;
+}
+
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    transition: background 0.2s;
+}
+
+.song-item:hover {
+    background: #e0e0e0;
+}
+
+.song-name {
     flex-grow: 1;
     cursor: pointer;
-    }
+}
 
-#current-time, #duration {
-    font-size: 0.85rem;
-    font-family: monospace;
+.delete-item-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px;
+}
+
+.empty-msg {
+    text-align: center;
     color: #888;
+    margin-top: 20px;
 }

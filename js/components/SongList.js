@@ -2,6 +2,7 @@ export class SongList extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this.currentSongs = []; 
     }
 
     connectedCallback() {
@@ -12,22 +13,45 @@ export class SongList extends HTMLElement {
     render() {
         this.shadowRoot.innerHTML = `
         <link rel="stylesheet" href="./css/components/SongList.css">
-        <div class="header">
-            <h2>My Songs</h2>
-            <button class="add-song" id="add-song">Add Song</button>
-            <input type="file" id="file-input" accept="audio/mp3, audio/m4a" multiple hidden>
-        </div>
-        <div id="list-container"></div>
+
+
+        <div class="song-list-container">
+            <div class="header">
+                <h2>My Songs</h2>
+                <div class="actions">
+
+                    <button id="add-btn" title="Add local file">➕</button>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search song... 🔎">
+            </div>
+
+            <input type="file" id="file-input" accept="audio/*" multiple style="display: none;">
+
+            <div id="list-container"></div>
+                </div>
+            </div>
         `;
     }
 
     init() {
-        const addBtn = this.shadowRoot.getElementById('add-song');
+        const addBtn = this.shadowRoot.getElementById('add-btn');
         const fileInput = this.shadowRoot.getElementById('file-input');
+        const searchInput = this.shadowRoot.getElementById('search-input');
+    
 
         addBtn.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', (event) => this.handleFiles(event));
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            // Filter songs array
+            const filteredSongs = this.currentSongs.filter(song => song.title.toLowerCase().includes(searchTerm));
+            this.renderSongs(filteredSongs);
+        });
     }
 
     handleFiles(event) {
@@ -46,15 +70,21 @@ export class SongList extends HTMLElement {
     }
 
     updateList(songs) {
+        this.currentSongs = songs;
+        this.shadowRoot.getElementById('search-input').value = ''; // Clear search input
+        this.renderSongs(songs);
+    }
+
+    renderSongs(songsToRender) {
         const container = this.shadowRoot.getElementById('list-container');
         container.innerHTML = ''; // Clear existing list
 
-        if (songs.length === 0) {
+        if (songsToRender.length === 0) {
             container.innerHTML = '<p style="text-align: center; color: #888;">No songs available.</p>';
             return;
         } 
 
-        songs.forEach(song => {
+        songsToRender.forEach(song => {
 
             // Error handling
             if (!song || !song.file || !song.title) {
