@@ -91,4 +91,53 @@ export class MusicDB {
             request.onerror = (event) => reject("Error fetching playlists: " + event.target.error);
         });
     }  
+
+    async updatePlaylist(playlistData) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['playlists'], 'readwrite');
+            const store = transaction.objectStore('playlists');
+            const request = store.put(playlistData); // put only updates if the ID already exists
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject("Error updating playlist: " + event.target.error);
+        });
+    }
+    
+    async getSongsByIds(idsArray) {
+        if (!idsArray || idsArray.length === 0) return [];
+
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['songs'], 'readonly');
+            const store = transaction.objectStore('songs');
+            const results = [];
+            let completedRequests = 0;
+        
+            idsArray.forEach(id => {
+                const request = store.get(id);
+                request.onsuccess = () => {
+                    if (request.result) results.push(request.result);
+                    completedRequests++;
+                    // Once all requests are completed, resolve the promise with the songs array
+                    if (completedRequests === idsArray.length) {
+                        resolve(results);
+                    }
+                };
+                request.onerror = () => {
+                    completedRequests++;
+                    if (completedRequests === idsArray.length) resolve(results);
+                };
+            });
+        });
+    }
+    
+    async deletePlaylist(id) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['playlists'], 'readwrite');
+            const store = transaction.objectStore('playlists');
+            const request = store.delete(id);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject("Error deleting playlist: " + event.target.error);
+        });
+    }
 }

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         let currentQueue = [];
         let currentIndex = -1;
+        let activePlaylist = null; // Track the currently active playlist 
 
         // Aux function to reaload the list
         const loadSongsFromDB = async () => {
@@ -39,14 +40,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 2. Listen when a song is added
         document.addEventListener('request-add-song', async (event) => {
-            const files = event.detail.files;
-
-            // Save every uploaded file to the database
-            for (const file of files) {
-                await db.addSong(file);
+            if (!activePlaylist) {
+                alert('Please select a playlist before adding songs.');
+                return;
             }
 
-            await loadSongsFromDB();
+            const files = event.detail.files;
+            // Save every uploaded file to the database
+            for (const file of files) {
+                // Save to DB
+                const newSongId= await db.addSong(file);
+
+                // Update the current playlist with the new song ID
+                activePlaylist.songIds.push(newSongId);
+            }
+
+            // Reload songs and playlists to reflect changes
+            await db.updatePlaylist(activePlaylist);
+            
+            // Refresh the song list with songs from the active playlist
+            const songsInPlaylist = await db.getSongsByIds(activePlaylist.songIds);
+            songListEl.updateList(songsInPlaylist);
         });
 
         // 3. Listen to the request and connects to the audio player
@@ -77,6 +91,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.addEventListener('request-create-playlist', async (event) => {
             const newPlaylist = event.detail;
             await db.addPlaylist(newPlaylist);
+            await loadPlaylistsFromDB();
+        });
+
+        // 7. Select a playlist
+        document.addEventListener('request-select-playlist', async (event) => {
+            activePlaylist = event.detail.playlist;
+            console.log('Selected playlist:', activePlaylist.name);
+            // Get songs from the ID of the playlist
+            const songsInPlaylist = await db.getSongsByIds(activePlaylist.songIds || []);
+            songListEl.updateList(songsInPlaylist);
+        });
+
+        // 8. Reload playlist after changes
+        document.addEventListener('request-refresh-playlist', async (event) => {
+           await loadPlaylistsFromDB(); 
+        });
+
+        // 9. Handle playlist deletion
+        document.addEventListener('request-delete-playlist', async (event) => {
+            const playlistIdToDelete = event.detail.id;
+            await db.deletePlaylist(playlistIdToDelete);
+
+            // If the deleted playlist was active, reset the song list and active playlist
+            if (activePlaylist && activePlaylist.id === playlistIdToDelete) {
+                activePlaylist = null;
+                songListEl.updateList([]);
+            }
             await loadPlaylistsFromDB();
         });
 

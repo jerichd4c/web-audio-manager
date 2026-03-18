@@ -49,12 +49,17 @@ export class PlaylistManager extends HTMLElement {
         this.cancelBtn = this.shadowRoot.getElementById('cancel-btn');
         this.acceptBtn = this.shadowRoot.getElementById('accept-btn');
         this.nameInput = this.shadowRoot.getElementById('playlist-name-input');
+        this.deleteModeBtn = this.shadowRoot.getElementById('delete-mode-btn');
+
+        this.isDeleteMode = false;
 
         // Show new playlist dialog 
         this.addBtn.addEventListener('click', () => {
             this.dialog.classList.remove('hidden');
             this.nameInput.focus();
         });
+
+        // Hide dialog on cancel
         
         this.cancelBtn.addEventListener('click', () => {
             this.dialog.classList.add('hidden');
@@ -63,6 +68,13 @@ export class PlaylistManager extends HTMLElement {
 
         // Handle new playlist creation
         this.acceptBtn.addEventListener('click', () => this.createNewPlaylist());
+
+        // Delete playlist mode toggle
+        this.deleteModeBtn.addEventListener('click', () => {
+            this.isDeleteMode = !this.isDeleteMode;
+            this.deleteModeBtn.style.color = this.isDeleteMode ? 'red' : 'black';
+            this.dispatchEvent(new CustomEvent('request-refresh-playlist', { bubbles: true, composed: true }));
+        });
     }
 
     createNewPlaylist() {
@@ -96,12 +108,41 @@ export class PlaylistManager extends HTMLElement {
             item.className = 'playlist-item';
             item.textContent = playlist.name;
 
-            item.addEventListener('click', () => {
-                this.dispatchEvent(new CustomEvent('request-select-playlist', {
-                    detail: { playlist: playlist },
-                    bubbles: true,
-                    composed: true
-                }));
+            // Name container
+            const nameSpam = document.createElement('span');
+            nameSpam.textContent = playlist.name;
+            nameSpam.style.flex = '1';
+
+            // Delete Button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '🗑️';
+            deleteBtn.className = 'delete-item-btn';
+            deleteBtn.style.display = this.isDeleteMode ? 'block' : 'none';
+
+            item.appendChild(nameSpam);
+            item.appendChild(deleteBtn);
+
+            // Event for selecting a playlist
+            nameSpam.addEventListener('click', () => {
+                if (!this.isDeleteMode) {
+                    this.dispatchEvent(new CustomEvent('request-select-playlist', {
+                        detail: { playlist: playlist },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            });
+
+            // Event to delete a playlist
+            deleteBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent triggering the select event
+                if (confirm(`Are you sure you want to delete the playlist "${playlist.name}"?`)) {
+                    this.dispatchEvent(new CustomEvent('request-delete-playlist', {
+                        detail: { id: playlist.id },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
             });
 
             listContainer.appendChild(item);
