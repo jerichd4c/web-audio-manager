@@ -7,6 +7,7 @@ export class PlaylistManager extends HTMLElement {
     connectedCallback() {
         this.render();
         this.init();
+        this.currentPLaylist = [];
     }
 
     render() {
@@ -26,6 +27,10 @@ export class PlaylistManager extends HTMLElement {
                     <input type="text" id="search-input" placeholder="Search playlist... 🔎">
                 </div>
                 
+                <div id="delete-all-container" style="display: none; text-align: right; margin-bottom: 10px;">
+                    <button id="delete-all-btn" style="color: red; cursor: pointer; background: none; border: 1px solid red; padding: 5px 10px; border-radius: 5px;">🗑️ Delete All</button>
+                </div>
+
                 <div id="playlist-list" class="scrollable-list">
                     <!-- Playlists will be dynamically added here -->
                 </div>
@@ -51,6 +56,10 @@ export class PlaylistManager extends HTMLElement {
         this.nameInput = this.shadowRoot.getElementById('playlist-name-input');
         this.deleteModeBtn = this.shadowRoot.getElementById('delete-mode-btn');
 
+        const searchInput = this.shadowRoot.getElementById('search-input');
+        const deleteAllContainer = this.shadowRoot.getElementById('delete-all-container');
+        const deleteAllBtn = this.shadowRoot.getElementById('delete-all-btn');
+
         this.isDeleteMode = false;
 
         // Show new playlist dialog 
@@ -73,7 +82,26 @@ export class PlaylistManager extends HTMLElement {
         this.deleteModeBtn.addEventListener('click', () => {
             this.isDeleteMode = !this.isDeleteMode;
             this.deleteModeBtn.style.color = this.isDeleteMode ? 'red' : 'black';
+            deleteAllContainer.style.display = this.isDeleteMode ? 'block' : 'none';
             this.dispatchEvent(new CustomEvent('request-refresh-playlist', { bubbles: true, composed: true }));
+        });
+
+        // Cascade deletetion
+        deleteAllBtn.addEventListener('click', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filtered = this.currentPlaylists.filter(p => p.name.toLowerCase().includes(searchTerm));
+
+            if (filtered.length === 0) return;
+
+            if (confirm(`¿Seguro que deseas borrar TODAS las playlists visibles (${filtered.length}) y sus canciones?`)) {
+                filtered.forEach(p => {
+                    this.dispatchEvent(new CustomEvent('request-delete-playlist', {
+                        detail: { id: p.id },
+                        bubbles: true,
+                        composed: true
+                    }));
+                });
+            }
         });
     }
 
@@ -95,6 +123,7 @@ export class PlaylistManager extends HTMLElement {
     }
 
     updateList(playlists) {
+        this.currentPlaylists = playlists;
         const listContainer = this.shadowRoot.getElementById('playlist-list');
         listContainer.innerHTML = ''; // Clear current list
         

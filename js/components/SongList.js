@@ -14,7 +14,6 @@ export class SongList extends HTMLElement {
         this.shadowRoot.innerHTML = `
         <link rel="stylesheet" href="./css/components/SongList.css">
 
-
         <div class="song-list-container">
             <div class="header">
                 <h2>My Songs</h2>
@@ -29,6 +28,10 @@ export class SongList extends HTMLElement {
                 <input type="text" id="search-input" placeholder="Search song... 🔎">
             </div>
 
+            <div id="delete-all-container" style="display: none; text-align: right; margin-bottom: 10px;">
+                <button id="delete-all-btn" style="color: red; cursor: pointer; background: none; border: 1px solid red; padding: 5px 10px; border-radius: 5px;">🗑️ Delete All</button>
+            </div>
+
             <input type="file" id="file-input" accept="audio/mp3, audio/m4a, audio/flac, audio/wav, audio/ogg" multiple hidden>
 
             <div id="list-container"></div>
@@ -41,6 +44,8 @@ export class SongList extends HTMLElement {
         const addBtn = this.shadowRoot.getElementById('add-btn');
         const fileInput = this.shadowRoot.getElementById('file-input');
         const searchInput = this.shadowRoot.getElementById('search-input');
+        const deleteAllContainer = this.shadowRoot.getElementById('delete-all-container');
+        const deleteAllBtn = this.shadowRoot.getElementById('delete-all-btn');
 
         this.deleteModeBtn = this.shadowRoot.getElementById('delete-mode-btn');
         this.isDeleteMode = false;
@@ -48,6 +53,8 @@ export class SongList extends HTMLElement {
         this.deleteModeBtn.addEventListener('click', () => {
             this.isDeleteMode = !this.isDeleteMode;
             this.deleteModeBtn.style.color = this.isDeleteMode ? 'red' : 'black';
+
+            deleteAllContainer.style.display = this.isDeleteMode ? 'block' : 'none';
             
             // Render songs again to update the delete buttons visibility
             const searchTerm = searchInput.value.toLowerCase();
@@ -55,6 +62,26 @@ export class SongList extends HTMLElement {
                 song.title.toLowerCase().includes(searchTerm)
             );
             this.renderSongs(filteredSongs);
+        });
+
+        // Cascade deletetion
+        deleteAllBtn.addEventListener('click', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredSongs = this.currentSongs.filter(song =>
+                song.title.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredSongs.length === 0) return;
+
+            if (confirm(`Are you sure you want to delete all ${filteredSongs.length} songs in this list? This action cannot be undone.`)) {
+                filteredSongs.forEach(song => {
+                    this.dispatchEvent(new CustomEvent('request-remove-song', {
+                        detail: { songId: song.id },
+                        bubbles: true,
+                        composed: true
+                    }));
+                });
+            }
         });
     
         addBtn.addEventListener('click', () => fileInput.click());

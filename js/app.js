@@ -46,8 +46,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const files = event.detail.files;
+            const allExistingSongs = await db.getAllSongs();
+
             // Save every uploaded file to the database
             for (const file of files) {
+
+               const isDuplicate = allExistingSongs.find(s => 
+                    s.file.name === file.name && s.file.size === file.size
+                );
+
+                if (isDuplicate) {
+                    const proceed = confirm(`The song "${file.name}" already exists in the directory. Do you want to add it anyway?`);
+                    if (!proceed) continue; 
+                }
+
                 // Save to DB
                 const newSongId= await db.addSong(file);
 
@@ -111,6 +123,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 9. Handle playlist deletion
         document.addEventListener('request-delete-playlist', async (event) => {
             const playlistIdToDelete = event.detail.id;
+
+            // 1. Get full playlist details to access song IDs before deletion
+            const playlists = await db.getAllPlaylists();
+            const playlistToDelete = playlists.find(p => p.id === playlistIdToDelete);
+
+            // 2. Delete songs in the playlist
+            if (playlistToDelete && playlistToDelete.songIds) {
+                for (const songId of playlistToDelete.songIds) {
+                    await db.deleteSong(songId);
+                }
+            }
+
             await db.deletePlaylist(playlistIdToDelete);
 
             // If the deleted playlist was active, reset the song list and active playlist
