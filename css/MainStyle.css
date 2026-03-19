@@ -5,24 +5,23 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f0f0;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    overflow: auto; 
 }
 
 .app-layout {
     display: grid;
-    grid-template-columns: 250px minmax(400px, 1fr) 300px;
+    grid-template-columns: 250px 600px 300px;
+    width: 1150px; 
+    height: 750px; /* Altura inamovible */
     background: white;
-    width: 95vw;
-    min-width: 950px; 
-    height: 90vh;
     border: 3px solid #222;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     overflow: hidden; 
 }
 
