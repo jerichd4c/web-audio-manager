@@ -36,15 +36,17 @@ export class SongList extends HTMLElement {
 
             <div id="list-container"></div>
 
-            <dialog id="edit-metadata-modal" style="border-radius: 8px; border: 1px solid #ccc; padding: 20px; width: 80%;">
-                    <h3 style="margin-top: 0;">Edit Metadata</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <input type="text" id="edit-title" placeholder="Título de la canción">
-                        <input type="text" id="edit-artist" placeholder="Artista">
-                        <input type="text" id="edit-genre" placeholder="Género">
+            <dialog id="edit-metadata-modal" style="border-radius: 8px; border: 1px solid #ccc; padding: 20px; width: 320px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                    <h3 style="margin-top: 0; text-align: center;">Edit Metadata</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="text" id="edit-title" placeholder="Song Title" style="padding: 8px; border: 1px solid #aaa; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                        <input type="text" id="edit-artist" placeholder="Artist" style="padding: 8px; border: 1px solid #aaa; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                        <input type="text" id="edit-genre" placeholder="Genre" style="padding: 8px; border: 1px solid #aaa; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                        
                         <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                            <button id="cancel-edit-btn" style="cursor: pointer;">Cancelar</button>
-                            <button id="save-metadata-btn" style="cursor: pointer; background: #222; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Guardar</button>
+                            <button id="cancel-edit-btn" style="cursor: pointer; padding: 6px 15px; border-radius: 4px; border: 1px solid #ccc; background: #f0f0f0;">Cancel</button>
+                            <button id="save-metadata-btn" style="cursor: pointer; background: #222; color: white; border: none; padding: 6px 15px; border-radius: 4px; font-weight: bold;">Save</button>
                         </div>
                     </div>
                 </dialog>

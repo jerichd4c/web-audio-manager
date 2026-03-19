@@ -19,10 +19,10 @@ export class MainPlayer extends HTMLElement {
             <img id="cover-art" src="./resources/default-cover.jpg" alt="Song Cover" width="150" height="150">
             
             <div class="info-container">
-                <h2 id="track-title" class="title">Selecciona un tema</h2>
-                <h3 id="track-artist" class="artist">Artista</h3>
-                <h4 id="track-genre" class="genre">Género</h4>
-            </div><h2 id="title">Select a Song</h2>
+                <h2 id="track-title" class="title">Select a Song</h2>
+                <h3 id="track-artist" class="artist">Artist</h3>
+                <h4 id="track-genre" class="genre">Genre</h4>
+            </div>
 
             <div class="progress-container">
                 <span id="current-time">0:00</span>
