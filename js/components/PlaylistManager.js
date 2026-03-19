@@ -86,14 +86,14 @@ export class PlaylistManager extends HTMLElement {
             this.dispatchEvent(new CustomEvent('request-refresh-playlist', { bubbles: true, composed: true }));
         });
 
-        // Cascade deletetion
+        // Cascade deletion
         deleteAllBtn.addEventListener('click', () => {
             const searchTerm = searchInput.value.toLowerCase();
             const filtered = this.currentPlaylists.filter(p => p.name.toLowerCase().includes(searchTerm));
 
             if (filtered.length === 0) return;
 
-            if (confirm(`¿Seguro que deseas borrar TODAS las playlists visibles (${filtered.length}) y sus canciones?`)) {
+            if (confirm(`Are you sure you want to delete all filtered playlists (${filtered.length}) and their songs?`)) {
                 filtered.forEach(p => {
                     this.dispatchEvent(new CustomEvent('request-delete-playlist', {
                         detail: { id: p.id },

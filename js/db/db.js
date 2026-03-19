@@ -39,18 +39,10 @@ export class MusicDB {
         });
     }
 
-    async addSong(file) {
+    async addSong(songData) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(['songs'], 'readwrite');
             const store = transaction.objectStore('songs');
-
-            // Song data to be stored in the database
-            const songData = {
-                file: file,
-                title: file.name.replace(/\.[^/.]+$/, ""),
-                artist: "Unknown Artist",
-                genre: "Unknown Genre",
-            };
 
             const request = store.add(songData);
 
@@ -151,4 +143,16 @@ export class MusicDB {
             request.onerror = (event) => reject("Error deleting song: " + event.target.error);
         });
     }
+
+    async updateSong(songData) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['songs'], 'readwrite');
+            const store = transaction.objectStore('songs');
+            const request = store.put(songData); // put only updates if the ID already exists
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject("Error updating song: " + event.target.error);
+        });
+    }
+
 }

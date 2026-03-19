@@ -35,7 +35,19 @@ export class SongList extends HTMLElement {
             <input type="file" id="file-input" accept="audio/mp3, audio/m4a, audio/flac, audio/wav, audio/ogg" multiple hidden>
 
             <div id="list-container"></div>
-                </div>
+
+            <dialog id="edit-metadata-modal" style="border-radius: 8px; border: 1px solid #ccc; padding: 20px; width: 80%;">
+                    <h3 style="margin-top: 0;">Editar Metadata</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="text" id="edit-title" placeholder="Título de la canción">
+                        <input type="text" id="edit-artist" placeholder="Artista">
+                        <input type="text" id="edit-genre" placeholder="Género">
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                            <button id="cancel-edit-btn" style="cursor: pointer;">Cancelar</button>
+                            <button id="save-metadata-btn" style="cursor: pointer; background: #222; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Guardar</button>
+                        </div>
+                    </div>
+                </dialog>
             </div>
         `;
     }
@@ -64,7 +76,7 @@ export class SongList extends HTMLElement {
             this.renderSongs(filteredSongs);
         });
 
-        // Cascade deletetion
+        // Cascade deletion
         deleteAllBtn.addEventListener('click', () => {
             const searchTerm = searchInput.value.toLowerCase();
             const filteredSongs = this.currentSongs.filter(song =>
@@ -119,22 +131,42 @@ export class SongList extends HTMLElement {
 
     renderSongs(songsToRender) {
         const container = this.shadowRoot.getElementById('list-container');
-        container.innerHTML = ''; // Clear existing list
+        const editModal = this.shadowRoot.getElementById('edit-metadata-modal');
+        const editTitleInput = this.shadowRoot.getElementById('edit-title');
+        const editArtistInput = this.shadowRoot.getElementById('edit-artist');
+        const editGenreInput = this.shadowRoot.getElementById('edit-genre');
+        const cancelEditBtn = this.shadowRoot.getElementById('cancel-edit-btn');
+        const saveMetadataBtn = this.shadowRoot.getElementById('save-metadata-btn');
+
+        container.innerHTML = ''; 
 
         if (songsToRender.length === 0) {
             container.innerHTML = '<p style="text-align: center; color: #888;">No songs available.</p>';
             return;
         } 
 
-        songsToRender.forEach(song => {
+        let songToEdit = null;
 
-            // Error handling
-            if (!song || !song.file || !song.title) {
-                console.error('Invalid song data:', song);
-                return;
+        cancelEditBtn.onclick = () => editModal.close();
+        saveMetadataBtn.onclick = () => {
+            if (songToEdit) {
+                songToEdit.title = editTitleInput.value.trim() || songToEdit.title;
+                songToEdit.artist = editArtistInput.value.trim();
+                songToEdit.genre = editGenreInput.value.trim();
+
+                this.dispatchEvent(new CustomEvent('request-update-song', {
+                    detail: { song: songToEdit },
+                    bubbles: true, composed: true
+                }));
+                editModal.close();
             }
+        };
+
+        songsToRender.forEach(song => {
+            if (!song || !song.file || !song.title) return;
 
             const item = document.createElement('div');
+            item.className = 'song-item';
             item.style.cssText = `
                 display: flex;
                 justify-content: space-between;
@@ -145,36 +177,38 @@ export class SongList extends HTMLElement {
                 transition: background-color 0.2s;
             `;
 
-            // Play icon
             const nameSpan = document.createElement('span');
-            nameSpan.textContent = song.title;
+            nameSpan.className = 'song-name';
+            nameSpan.textContent = song.artist ? `${song.title} - ${song.artist}` : song.title;
             nameSpan.style.flexGrow = '1';
             nameSpan.style.cursor = 'pointer';
 
-            // Delete icon
+            const btnContainer = document.createElement('div');
+            btnContainer.style.display = 'flex';
+            btnContainer.style.gap = '5px';
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '🛠️';
+            editBtn.className = 'delete-item-btn';
+            editBtn.title = 'Editar metadatos';
+            
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                songToEdit = song;
+                editTitleInput.value = song.title || '';
+                editArtistInput.value = song.artist || '';
+                editGenreInput.value = song.genre || '';
+                editModal.showModal();
+            });
+            btnContainer.appendChild(editBtn);
+
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = '🗑️';
             deleteBtn.className = 'delete-item-btn';
             deleteBtn.style.display = this.isDeleteMode ? 'block' : 'none';
 
-            item.appendChild(nameSpan);
-            item.appendChild(deleteBtn);
-
-            // When a song is clicked, request the main player to play it
-            nameSpan.addEventListener('click', () => {
-                if (!this.isDeleteMode) {
-                    this.dispatchEvent(new CustomEvent('request-play', {
-                    detail: { song: song },
-                    bubbles: true,
-                    // Bypass shadow DOM to allow main player to listen to this event
-                    composed: true
-                    }));
-                } 
-            });
-
-            // When delete button is clicked, request the main app to remove the song from the database
             deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que se dispare el evento de reproducir al hacer clic en borrar
+                e.stopPropagation();
                 if (confirm(`Are you sure you want to remove "${song.title}" from this list?`)) {
                     this.dispatchEvent(new CustomEvent('request-remove-song', {
                         detail: { songId: song.id },
@@ -182,6 +216,20 @@ export class SongList extends HTMLElement {
                         composed: true
                     }));
                 }
+            });
+            btnContainer.appendChild(deleteBtn);
+
+            item.appendChild(nameSpan);
+            item.appendChild(btnContainer);
+
+            nameSpan.addEventListener('click', () => {
+                if (!this.isDeleteMode) {
+                    this.dispatchEvent(new CustomEvent('request-play', {
+                    detail: { song: song },
+                    bubbles: true,
+                    composed: true
+                    }));
+                } 
             });
 
             container.appendChild(item);

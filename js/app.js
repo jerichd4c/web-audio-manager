@@ -34,6 +34,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             playlistManagerEl.updateList(playlists);
         };
 
+        // Aux function to load metadata
+        const extractMetadata = (file) => {
+            return new Promise((resolve) => {
+                if (!window.jsmediatags) resolve({}); 
+
+                window.jsmediatags.read(file, {
+                        onSuccess: (tag) => resolve(tag.tags || {}),
+                        onError: () => resolve({})
+                    });
+                });
+            };
+
         // 1. Load songs stored in the database AND playlists
         await loadSongsFromDB();
         await loadPlaylistsFromDB();
@@ -63,8 +75,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!proceed) continue; 
                 }
 
+                // Extract metadata
+                const tags = await extractMetadata(file);
+
+                const songData = {
+                    file: file,
+                    title: tags.title || file.name.replace(/\.[^/.]+$/, ""),
+                    artist: tags.artist || "Unknown Artist",
+                    genre: tags.genre || "Unknown Genre",
+                    cover: tags.picture || null // Bytes array
+                };
+
                 // Save to DB
-                const newSongId= await db.addSong(file);
+                const newSongId= await db.addSong(songData);
 
                 // Update the current playlist with the new song ID
                 activePlaylist.songIds.push(newSongId);
@@ -74,8 +97,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             await db.updatePlaylist(activePlaylist);
             
             // Refresh the song list with songs from the active playlist
-            const songsInPlaylist = await db.getSongsByIds(activePlaylist.songIds);
-            songListEl.updateList(songsInPlaylist);
+            const updatedSongs = await db.getSongsByIds(activePlaylist.songIds);
+            songListEl.updateList(updatedSongs);
+        });
+
+        // 2.5 Listen to metadata update requests
+        document.addEventListener('request-update-song', async (event) => {
+            const updatedSong = event.detail.song;
+            await db.updateSong(updatedSong);
+
+            // Refresh view
+            const updatedSongs = await db.getSongsByIds(activePlaylist.songIds);
+            songListEl.updateList(updatedSongs);
         });
 
         // 3. Listen to the request and connects to the audio player
@@ -175,7 +208,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 await loadSongsFromDB(); // If no active playlist, just reload all songs
             }
-        });
+        });       
 
     } catch (error) {
         console.error('Failed to initialize database:', error);
