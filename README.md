@@ -1,6 +1,6 @@
 # Web Audio Manager 🎵
 
-A playlist management system and local audio player based on IndexedDB. It features a modern YouTube Music-inspired dark mode aesthetic and native browser APIs to handle audio playback, metadata extraction, and local storage.
+A playlist management system and local audio player based on IndexedDB. It features a modern nspired dark mode aesthetic and native browser APIs to handle audio playback, metadata extraction, and local storage.
 
 ## Quick Start 🚀
 
