@@ -20,7 +20,7 @@ export class SongList extends HTMLElement {
                 <div class="actions">
 
                     <button id="add-btn" title="Add local file">➕</button>
-                    <button id="delete-mode-btn" title="Borrar canciones">🗑️</button>
+                    <button id="delete-mode-btn" title="Delete Song">🗑️</button>
                 </div>
             </div>
 
@@ -169,6 +169,10 @@ export class SongList extends HTMLElement {
 
             const item = document.createElement('div');
             item.className = 'song-item';
+            if (this.activeSongId === song.id) {
+                item.classList.add('active');
+            }
+            item.dataset.id = song.id;
             item.style.cssText = `
                 display: flex;
                 justify-content: space-between;
@@ -179,11 +183,16 @@ export class SongList extends HTMLElement {
                 transition: background-color 0.2s;
             `;
 
-            const nameSpan = document.createElement('span');
+            const nameSpan = document.createElement('div');
             nameSpan.className = 'song-name';
-            nameSpan.textContent = song.artist ? `${song.title} - ${song.artist}` : song.title;
+            
+            const genreText = song.genre || 'Unknown genre';
+            const artistText = song.artist || 'Unknown Artist';
+            nameSpan.innerHTML = `<div class="song-title" style="font-weight: 500;">${song.title}</div><div class="song-meta" style="font-size: 13px; color: #aaa; margin-top: 4px; font-weight: 400;">${artistText} • ${genreText}</div>`;
+            
             nameSpan.style.flexGrow = '1';
             nameSpan.style.cursor = 'pointer';
+            nameSpan.style.overflow = 'hidden';
 
             const btnContainer = document.createElement('div');
             btnContainer.style.display = 'flex';
@@ -235,6 +244,18 @@ export class SongList extends HTMLElement {
             });
 
             container.appendChild(item);
+        });
+    }
+
+    setActiveSong(id) {
+        this.activeSongId = id;
+        const items = this.shadowRoot.querySelectorAll('.song-item');
+        items.forEach(item => {
+            if (item.dataset.id == id) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
         });
     }   
 

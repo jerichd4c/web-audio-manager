@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Find the index of the song to play in the current queue
             currentIndex = currentQueue.findIndex(s => s.id === songToPlay.id);
             mainPlayerEl.loadAndPlay(songToPlay);
+            songListEl.setActiveSong(songToPlay.id);
         });
 
         // 4. Next Button
@@ -125,6 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Move to the next song, goes to 0 if at the end
             currentIndex = (currentIndex + 1) % currentQueue.length;
             mainPlayerEl.loadAndPlay(currentQueue[currentIndex]);
+            songListEl.setActiveSong(currentQueue[currentIndex].id);
         });
 
         // 5. Previous Button
@@ -133,6 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Move to the previous song, goes to the last if at the start
             currentIndex = (currentIndex - 1 + currentQueue.length) % currentQueue.length;
             mainPlayerEl.loadAndPlay(currentQueue[currentIndex]);
+            songListEl.setActiveSong(currentQueue[currentIndex].id);
         });
 
         // 6. Listen to playlist creation
@@ -146,6 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.addEventListener('request-select-playlist', async (event) => {
             activePlaylist = event.detail.playlist;
             console.log('Selected playlist:', activePlaylist.name);
+            playlistManagerEl.setActivePlaylist(activePlaylist.id);
             // Get songs from the ID of the playlist
             const songsInPlaylist = await db.getSongsByIds(activePlaylist.songIds || []);
             songListEl.updateList(songsInPlaylist);

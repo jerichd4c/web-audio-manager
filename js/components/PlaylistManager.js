@@ -135,11 +135,20 @@ export class PlaylistManager extends HTMLElement {
         playlists.forEach(playlist => {
             const item = document.createElement('div');
             item.className = 'playlist-item';
+            if (this.activePlaylistId === playlist.id) {
+                item.classList.add('active');
+            }
+            item.dataset.id = playlist.id;
 
             // Name container
             const nameSpam = document.createElement('span');
             nameSpam.textContent = playlist.name;
             nameSpam.style.flex = '1';
+
+            // Btn Container
+            const btnContainer = document.createElement('div');
+            btnContainer.style.display = 'flex';
+            btnContainer.style.gap = '5px';
 
             // Delete Button
             const deleteBtn = document.createElement('button');
@@ -147,8 +156,10 @@ export class PlaylistManager extends HTMLElement {
             deleteBtn.className = 'delete-item-btn';
             deleteBtn.style.display = this.isDeleteMode ? 'block' : 'none';
 
+            btnContainer.appendChild(deleteBtn);
+
             item.appendChild(nameSpam);
-            item.appendChild(deleteBtn);
+            item.appendChild(btnContainer);
 
             // Event for selecting a playlist
             nameSpam.addEventListener('click', () => {
@@ -174,6 +185,18 @@ export class PlaylistManager extends HTMLElement {
             });
 
             listContainer.appendChild(item);
+        });
+    }
+
+    setActivePlaylist(id) {
+        this.activePlaylistId = id;
+        const items = this.shadowRoot.querySelectorAll('.playlist-item');
+        items.forEach(item => {
+            if (item.dataset.id == id) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
         });
     }
 

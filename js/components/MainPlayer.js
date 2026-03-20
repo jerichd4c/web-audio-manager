@@ -15,30 +15,33 @@ export class MainPlayer extends HTMLElement {
         <link rel="stylesheet" href="./css/components/MainPlayer.css">
         
         <div class="player-container">
-
-            <img id="cover-art" src="./resources/default-cover.jpg" alt="Song Cover" width="150" height="150">
-            
-            <div class="info-container">
-                <h2 id="track-title" class="title">Select a Song</h2>
-                <h3 id="track-artist" class="artist">Artist</h3>
-                <h4 id="track-genre" class="genre">Genre</h4>
+            <div class="left-section">
+                <img id="cover-art" src="./resources/default-cover.jpg" alt="Song Cover" width="150" height="150">
+                <div class="info-container">
+                    <h2 id="track-title" class="title">Select a Song</h2>
+                    <h3 id="track-artist" class="artist">Artist</h3>
+                    <h4 id="track-genre" class="genre">Genre</h4>
+                </div>
             </div>
 
-            <div class="progress-container">
-                <span id="current-time">0:00</span>
-                <input type="range" id="progress-bar" value="0" min="0" step="1">
-                <span id="total-duration">0:00</span>
+            <div class="center-section">
+                <div class="controls">
+                    <button id="prev-btn">⏮️</button>
+                    <button id="play-pause">▶</button>
+                    <button id="next-btn">⏭️</button>
+                </div>
+                <div class="progress-container">
+                    <span id="current-time">0:00</span>
+                    <input type="range" id="progress-bar" value="0" min="0" step="1">
+                    <span id="total-duration">0:00</span>
+                </div>
             </div>
 
-            <div class="controls">
-                <button id="prev-btn">⏮️</button>
-                <button id="play-pause">Play</button>
-                <button id="next-btn">⏭️</button>
-            </div>
-
-            <div class="volume-container">
-                <button id="mute-btn">🔊</button>
-                <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.01">
+            <div class="right-section">
+                <div class="volume-container">
+                    <button id="mute-btn">🔊</button>
+                    <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.01">
+                </div>
             </div>
         </div>
         `;
@@ -80,7 +83,7 @@ export class MainPlayer extends HTMLElement {
         const audioURL = URL.createObjectURL(songData.file);
         this.currentAudio.src = audioURL;
         this.currentAudio.play();
-        this.playPauseButton.textContent = 'Pause';
+        this.playPauseButton.textContent = '⏸';
 
         this.titleEl.textContent = songData.title || "Unknown Title";
         this.artistEl.textContent = songData.artist || "Unknown Artist";
@@ -112,8 +115,10 @@ export class MainPlayer extends HTMLElement {
     togglePlay() {
         if (this.currentAudio.paused) {
             this.currentAudio.play();
+            this.playPauseButton.textContent = '⏸';
         } else {
             this.currentAudio.pause();
+            this.playPauseButton.textContent = '▶';
         }
     }
 
