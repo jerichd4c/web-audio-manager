@@ -1,6 +1,6 @@
 # Web Audio Manager 🎵
 
-A playlist management system and local audio player based on IndexedDB. It features a modern nspired dark mode aesthetic and native browser APIs to handle audio playback, metadata extraction, and local storage.
+A playlist management system and local audio player based on IndexedDB. It features a modern inspired dark mode aesthetic and native browser APIs to handle audio playback, metadata extraction, and local storage.
 
 ## Quick Start 🚀
 
@@ -41,4 +41,4 @@ A playlist management system and local audio player based on IndexedDB. It featu
 - `js/db/db.js` — IndexedDB wrapper and schema definition.
 - `js/components/` — Individual logic and HTML encapsulation for `MainPlayer`, `PlaylistManager`, and `SongList`.
 - `css/` — Organized styles (Base Layout, Components).
-- `resources/` — Fallback cover arts and default graphics.
+- `resources/` — Fallback cover art.
