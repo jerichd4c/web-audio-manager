@@ -12,11 +12,12 @@ A playlist management system and local audio player based on IndexedDB. It featu
 
 ## Features & Screens 🧭
 
-- **Song List**: A central hub to upload and view your local audio files. Automatically extracts Track, Artist, and Genre data.
-- **Playlist Manager**: Create custom playlists, filter them via search, and easily delete them.
-- **Main Player**: A persistent bottom-bar player to manage audio playback, volume controls, and display the current track's cover art.
+- **Song List**: A central hub to upload and view your local audio files. Includes a **Theme Toggle** (🌙/☀️) for switching between dark and soft light modes.
+- **Playlist Manager**: Create custom playlists, filter them via search, edit names (🛠️), and easily delete them.
+- **Main Player**: A persistent bottom-bar player to manage audio playback. Now includes **Shuffle** (🔀) and **Loop** (🔁/🔂) functions.
 - **Metadata Editing**: Edit song titles, artists, and genres manually via an intuitive modal dialog.
-- **Responsive Layout**: A locked, full-screen (`100vw`/`100vh`) application interface that maintains structural integrity perfectly avoiding breaks on zoom.
+- **Responsive Layout**: A locked, full-screen (`100vw`/`100vh`) application interface that maintains structural integrity perfectly.
+- **Advanced Search**: Filter songs by title, artist, or genre directly from the main search bar.
 
 ## Controls & Configuration ⚙️
 

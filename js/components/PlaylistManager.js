@@ -162,12 +162,31 @@ export class PlaylistManager extends HTMLElement {
             btnContainer.style.display = 'flex';
             btnContainer.style.gap = '5px';
 
+            // Edit Button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '🛠️';
+            editBtn.className = 'delete-item-btn'; // Reusing style for consistency
+            editBtn.title = 'Edit Playlist Name';
+
+            editBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const newName = prompt('Enter new playlist name:', playlist.name);
+                if (newName && newName.trim() && newName.trim() !== playlist.name) {
+                    this.dispatchEvent(new CustomEvent('request-update-playlist', {
+                        detail: { id: playlist.id, name: newName.trim() },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            });
+            btnContainer.appendChild(editBtn);
+
             // Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = '🗑️';
             deleteBtn.className = 'delete-item-btn';
             deleteBtn.style.display = this.isDeleteMode ? 'block' : 'none';
-
+            
             btnContainer.appendChild(deleteBtn);
 
             item.appendChild(nameSpam);

@@ -170,6 +170,26 @@ document.addEventListener('DOMContentLoaded', async () => {
            await loadPlaylistsFromDB(); 
         });
 
+        // 8.5 Handle playlist update (name change)
+        document.addEventListener('request-update-playlist', async (event) => {
+            const { id, name } = event.detail;
+            
+            // Get all playlists to find the one to update
+            const playlists = await db.getAllPlaylists();
+            const playlistToUpdate = playlists.find(p => p.id === id);
+            
+            if (playlistToUpdate) {
+                playlistToUpdate.name = name;
+                await db.updatePlaylist(playlistToUpdate);
+                await loadPlaylistsFromDB();
+                
+                // If it was the active playlist, update the reference
+                if (activePlaylist && activePlaylist.id === id) {
+                    activePlaylist.name = name;
+                }
+            }
+        });
+
         // 9. Handle playlist deletion
         document.addEventListener('request-delete-playlist', async (event) => {
             const playlistIdToDelete = event.detail.id;
