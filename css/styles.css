@@ -15,6 +15,17 @@
     color: var(--text-primary);
 }
 
+body.light-theme {
+    --bg-base: #e0e0e0;
+    --bg-surface: #eeeeee;
+    --bg-elevated: #f5f5f5;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --accent: #222222;
+    --accent-hover: #444444;
+    --divider: rgba(0, 0, 0, 0.15);
+}
+
 body {
     margin: 0;
     padding: 0;

@@ -1,8 +1,8 @@
 :host {
     display: block;
     height: 100%;
-    background: #0f0f0f;
-    color: #fff;
+    background: var(--bg-base);
+    color: var(--text-primary);
     font-family: 'Roboto', sans-serif;
     padding: 32px 48px;
     box-sizing: border-box;
@@ -37,9 +37,9 @@ h2 {
 }
 
 .actions button {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--divider);
     border: none;
-    color: #fff;
+    color: var(--text-primary);
     cursor: pointer;
     font-size: 16px;
     padding: 10px 14px;
@@ -51,7 +51,22 @@ h2 {
 }
 
 .actions button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--divider-hover, rgba(255, 255, 255, 0.2));
+}
+
+#theme-toggle-btn {
+    /* Style consistency with other buttons in actions */
+    background: var(--divider);
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 14px;
+    border-radius: 20px;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-bar {
@@ -62,10 +77,10 @@ h2 {
     width: 100%;
     max-width: 450px;
     padding: 14px 20px;
-    background: #282828;
+    background: var(--bg-surface);
     border: 1px solid transparent;
     border-radius: 8px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 15px;
     box-sizing: border-box;
     transition: border-color 0.2s, background 0.2s;
@@ -77,8 +92,8 @@ h2 {
 
 #search-input:focus {
     outline: none;
-    border-color: rgba(255,255,255,0.2);
-    background: #333333;
+    border-color: var(--divider);
+    background: var(--bg-elevated);
 }
 
 #list-container {
@@ -124,7 +139,7 @@ h2 {
 .song-name {
     font-size: 15px;
     font-weight: 500;
-    color: #fff;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,7 +148,7 @@ h2 {
 .delete-item-btn {
     background: none;
     border: none;
-    color: #aaa;
+    color: var(--text-secondary);
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
@@ -147,9 +162,9 @@ h2 {
 
 /* Modals */
 dialog {
-    background: #282828 !important;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.1) !important;
+    background: var(--bg-surface) !important;
+    color: var(--text-primary);
+    border: 1px solid var(--divider) !important;
     border-radius: 12px !important;
     padding: 32px !important;
     box-shadow: 0 16px 32px rgba(0,0,0,0.5) !important;
@@ -167,9 +182,9 @@ dialog h3 {
 }
 
 dialog input {
-    background: #121212 !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    color: #fff !important;
+    background: var(--bg-base) !important;
+    border: 1px solid var(--divider) !important;
+    color: var(--text-primary) !important;
     padding: 14px !important;
     border-radius: 8px !important;
     font-size: 15px;
@@ -177,7 +192,7 @@ dialog input {
 
 dialog input:focus {
     outline: none;
-    border-color: #fff !important;
+    border-color: var(--text-primary) !important;
 }
 
 dialog button {
@@ -192,19 +207,19 @@ dialog button {
 
 #cancel-edit-btn {
     background: transparent !important;
-    color: #aaa !important;
+    color: var(--text-secondary) !important;
 }
 
 #cancel-edit-btn:hover {
-    background: rgba(255,255,255,0.1) !important;
-    color: #fff !important;
+    background: var(--divider) !important;
+    color: var(--text-primary) !important;
 }
 
 #save-metadata-btn {
-    background: #fff !important;
-    color: #030303 !important;
+    background: var(--text-primary) !important;
+    color: var(--bg-base) !important;
 }
 
 #save-metadata-btn:hover {
-    background: #e5e5e5 !important;
+    background: var(--accent-hover) !important;
 }

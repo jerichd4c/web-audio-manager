@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let currentQueue = [];
         let currentIndex = -1;
         let activePlaylist = null; // Track the currently active playlist 
-
+        let isShuffle = false;
         // Aux function to reaload the list
         const loadSongsFromDB = async () => {
             currentQueue = await db.getAllSongs();
@@ -123,8 +123,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 4. Next Button
         mainPlayerEl.addEventListener('request-next', () => {
             if (currentQueue.length === 0) return; 
-            // Move to the next song, goes to 0 if at the end
-            currentIndex = (currentIndex + 1) % currentQueue.length;
+
+            if (isShuffle && currentQueue.length > 1) {
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * currentQueue.length);
+                } while (nextIndex === currentIndex);
+                currentIndex = nextIndex;
+            } else {
+                // Move to the next song, goes to 0 if at the end
+                currentIndex = (currentIndex + 1) % currentQueue.length;
+            }
+
             mainPlayerEl.loadAndPlay(currentQueue[currentIndex]);
             songListEl.setActiveSong(currentQueue[currentIndex].id);
         });
@@ -209,10 +219,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 currentQueue = songsInPlaylist; // Update the current queue to reflect the removed song
             } else {
-
                 await loadSongsFromDB(); // If no active playlist, just reload all songs
             }
-        });       
+        });
+
+        // 11. Handle Theme Toggle
+        document.addEventListener('request-theme-toggle', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            console.log('Theme toggled. Light mode:', isLight);
+        });
+
+        // 12. Handle Shuffle Toggle
+        document.addEventListener('request-shuffle-toggle', (event) => {
+            isShuffle = event.detail.isShuffle;
+            console.log('Shuffle toggled:', isShuffle);
+        });
 
     } catch (error) {
         console.error('Failed to initialize database:', error);

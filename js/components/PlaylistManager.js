@@ -27,7 +27,7 @@ export class PlaylistManager extends HTMLElement {
                     <input type="text" id="search-input" placeholder="Search playlist... 🔎">
                 </div>
                 
-                <div id="delete-all-container" style="display: none; text-align: right; margin-bottom: 10px;">
+                <div id="delete-all-container" style="display: none; text-align: right; margin-bottom: 10px; padding-right: 24px;">
                     <button id="delete-all-btn" style="color: red; cursor: pointer; background: none; border: 1px solid red; padding: 5px 10px; border-radius: 5px;">🗑️ Delete All</button>
                 </div>
 

@@ -18,7 +18,7 @@ export class SongList extends HTMLElement {
             <div class="header">
                 <h2>My Songs</h2>
                 <div class="actions">
-
+                    <button id="theme-toggle-btn" title="Toggle Light/Dark Mode">🌙</button>
                     <button id="add-btn" title="Add local file">➕</button>
                     <button id="delete-mode-btn" title="Delete Song">🗑️</button>
                 </div>
@@ -63,6 +63,18 @@ export class SongList extends HTMLElement {
 
         this.deleteModeBtn = this.shadowRoot.getElementById('delete-mode-btn');
         this.isDeleteMode = false;
+
+        const themeToggleBtn = this.shadowRoot.getElementById('theme-toggle-btn');
+        themeToggleBtn.addEventListener('click', () => {
+            this.dispatchEvent(new CustomEvent('request-theme-toggle', {
+                bubbles: true,
+                composed: true
+            }));
+            
+            // Toggle icon locally for immediate feedback
+            const currentIcon = themeToggleBtn.textContent;
+            themeToggleBtn.textContent = currentIcon === '🌙' ? '☀️' : '🌙';
+        });
 
         this.deleteModeBtn.addEventListener('click', () => {
             this.isDeleteMode = !this.isDeleteMode;

@@ -26,9 +26,11 @@ export class MainPlayer extends HTMLElement {
 
             <div class="center-section">
                 <div class="controls">
+                    <button id="shuffle-btn" class="secondary-btn" title="Shuffle">🔀</button>
                     <button id="prev-btn">⏮️</button>
                     <button id="play-pause">▶</button>
                     <button id="next-btn">⏭️</button>
+                    <button id="loop-btn" class="secondary-btn" title="Loop Song">🔁</button>
                 </div>
                 <div class="progress-container">
                     <span id="current-time">0:00</span>
@@ -58,6 +60,15 @@ export class MainPlayer extends HTMLElement {
         this.volumeBar = this.shadowRoot.getElementById('volume-bar');
         this.muteBtn = this.shadowRoot.getElementById('mute-btn');
 
+        this.shuffleBtn = this.shadowRoot.getElementById('shuffle-btn');
+        this.loopBtn = this.shadowRoot.getElementById('loop-btn');
+
+        this.isShuffle = false;
+        this.loopMode = 'none'; // 'none', 'song'
+
+        this.shuffleBtn.addEventListener('click', () => this.toggleShuffle());
+        this.loopBtn.addEventListener('click', () => this.toggleLoop());
+
         // Metadata Elements
         this.coverArtEl = this.shadowRoot.getElementById('cover-art');
         this.titleEl = this.shadowRoot.getElementById('track-title');
@@ -66,7 +77,14 @@ export class MainPlayer extends HTMLElement {
 
         this.prevBtn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('request-prev', { bubbles: true, composed: true })));
         this.nextBtn.addEventListener('click', () => this.dispatchEvent(new CustomEvent('request-next', { bubbles: true, composed: true })));
-        this.currentAudio.addEventListener('ended', () => this.dispatchEvent(new CustomEvent('request-next', { bubbles: true, composed: true })));
+        this.currentAudio.addEventListener('ended', () => {
+            if (this.loopMode === 'song') {
+                this.currentAudio.currentTime = 0;
+                this.currentAudio.play();
+            } else {
+                this.dispatchEvent(new CustomEvent('request-next', { bubbles: true, composed: true }));
+            }
+        });
         document.addEventListener('play-song', (event) => this.loadAndPlay(event.detail.song));
         this.currentAudio.addEventListener('loadedmetadata', () => this.setDuration());
         this.currentAudio.addEventListener('timeupdate', () => this.updateProgress());
@@ -110,6 +128,29 @@ export class MainPlayer extends HTMLElement {
         
         // Return a data URL that can be used as the src for an image element
         return `data:${format};base64,${window.btoa(base64String)}`;
+    }
+
+    toggleShuffle() {
+        this.isShuffle = !this.isShuffle;
+        this.shuffleBtn.classList.toggle('active', this.isShuffle);
+        this.dispatchEvent(new CustomEvent('request-shuffle-toggle', {
+            detail: { isShuffle: this.isShuffle },
+            bubbles: true,
+            composed: true
+        }));
+    }
+
+    toggleLoop() {
+        if (this.loopMode === 'none') {
+            this.loopMode = 'song';
+            this.loopBtn.classList.add('active');
+            this.loopBtn.textContent = '🔂'; // Song loop icon
+        } else {
+            this.loopMode = 'none';
+            this.loopBtn.classList.remove('active');
+            this.loopBtn.textContent = '🔁'; // Normal loop icon
+        }
+        console.log('Loop mode:', this.loopMode);
     }
 
     togglePlay() {
