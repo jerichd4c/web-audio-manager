@@ -43,7 +43,7 @@
 
 [![Web Audio Manager Screen Shot][product-screenshot]](https://github.com/jerichd4c/web-audio-manager)
 
-Web Audio Manager is a robust client-side audio player that allows users to manage their music library directly in the browser. It prioritizes privacy and performance by using IndexedDB for storage and native Web Components for UI modularity.
+Web music player is a robust client-side audio player that allows users to manage their music library directly in the browser. It prioritizes privacy and performance by using IndexedDB for storage and native Web Components for UI modularity.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
