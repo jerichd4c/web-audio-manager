@@ -7,7 +7,7 @@
     <img src="resources/default-cover.jpg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Web Audio Player 🎵</h3>
+<h3 align="center">Web Music Player 🎵</h3>
 
   <p align="center">
     A playlist management system and local audio player based on IndexedDB. It features a modern dark mode aesthetic and native browser APIs to handle audio playback, metadata extraction, and local storage.
