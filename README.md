@@ -9,11 +9,7 @@
 </div>
 
 
-<!-- PROJECT LOGO -->
 <div align="center">
-  <a href="https://github.com/jerichd4c/web-audio-manager">
-    <img src="resources/default-cover.jpg" alt="Logo" width="80" height="80">
-  </a>
 
 <h3 align="center">Web Music Player</h3>
 
